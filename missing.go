@@ -8,6 +8,7 @@ import (
 
 // the CLI interface
 type Missing struct {
+	*InitPy `arg:"subcommand:init-py"`
 }
 
 // create the missing with the default settings

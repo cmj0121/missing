@@ -1,4 +1,4 @@
-SRC := $(wildcard .go)
+SRC := $(shell find . -name '*.go')
 BIN := cmd/missing
 
 .PHONY: all clean test run build upgrade help
@@ -12,6 +12,7 @@ clean:			# clean-up environment
 	rm -f $(BIN)
 
 test:			# run test
+	gofmt -w -s $(SRC)
 	go test -cover -failfast -timeout 2s ./...
 
 run:			# run in the local environment

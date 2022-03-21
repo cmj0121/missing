@@ -31,4 +31,4 @@ $(BIN): test
 
 %: %.go $(SRC)
 	go mod tidy
-	go build -o $@ $^ $(SRC)
+	go build -o $@ $<

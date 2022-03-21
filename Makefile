@@ -1,3 +1,6 @@
+SRC := $(wildcard .go)
+BIN := cmd/missing
+
 .PHONY: all clean test run build upgrade help
 
 all: 			# default action
@@ -6,12 +9,14 @@ all: 			# default action
 
 clean:			# clean-up environment
 	@find . -name '*.sw[po]' -delete
+	rm -f $(BIN)
 
 test:			# run test
+	go test -cover -failfast -timeout 2s ./...
 
 run:			# run in the local environment
 
-build:			# build the binary/library
+build: $(BIN)	# build the binary/library
 
 upgrade:		# upgrade all the necessary packages
 	pre-commit autoupdate
@@ -21,3 +26,9 @@ help:			# show this message
 	@printf "\n"
 	@perl -nle 'print $$& if m{^[\w-]+:.*?#.*$$}' $(MAKEFILE_LIST) | \
 		awk 'BEGIN {FS = ":.*?#"} {printf "    %-18s %s\n", $$1, $$2}'
+
+$(BIN): test
+
+%: %.go $(SRC)
+	go mod tidy
+	go build -o $@ $^ $(SRC)

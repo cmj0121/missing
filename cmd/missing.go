@@ -1,10 +1,12 @@
 package main
 
 import (
+	"os"
+
 	"github.com/cmj0121/missing"
 )
 
 func main() {
 	agent := missing.New()
-	agent.Run()
+	os.Exit(agent.Run())
 }

@@ -17,8 +17,19 @@ func New() *Missing {
 }
 
 // run on the command-line mode with passed argument
-func (missing *Missing) Run() {
+func (missing *Missing) Run() (exit int) {
 	arg.MustParse(missing)
+
+	found_missing, err := missing.InitPy.Execute()
+	switch {
+	case err != nil:
+		fmt.Println(err)
+		exit = 1
+	case found_missing:
+		exit = 2
+	}
+
+	return
 }
 
 // the version info

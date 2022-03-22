@@ -15,6 +15,9 @@ type InitPy struct {
 	// the project's base dir
 	BaseDir string `arg:"-b" default:"." help:"the python project's basedir"`
 
+	// keep check the root folder
+	KeepRoot bool `arg:"-r,--keep-root" help:"keep root __init__.py"`
+
 	// search the __init__.py used for unittest
 	Pattern string `arg:"-p" default:"test*.py" help:"the file regexp pattern and split-by comma (',')"`
 }
@@ -77,6 +80,11 @@ func (cmd *InitPy) search_missing_init_py(base string, res []*regexp.Regexp) (mi
 }
 
 func (cmd *InitPy) check_init_py_in_path(base string) (missing bool) {
+	if base == cmd.BaseDir && !cmd.KeepRoot {
+		// need not process the root folder
+		return
+	}
+
 	init_py_path := fmt.Sprintf("%v/__init__.py", base)
 	if _, err := os.Stat(init_py_path); errors.Is(err, os.ErrNotExist) {
 		missing = true

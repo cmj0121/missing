@@ -1,5 +1,5 @@
 SRC := $(shell find . -name '*.go')
-BIN := cmd/missing
+BIN := missing
 
 .PHONY: all clean test run build upgrade help
 
@@ -30,6 +30,6 @@ help:			# show this message
 
 $(BIN): test
 
-%: %.go $(SRC)
+%: cmd/%/main.go $(SRC)
 	go mod tidy
 	go build -o $@ $<

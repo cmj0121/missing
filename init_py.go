@@ -115,6 +115,7 @@ func (cmd *InitPy) check_init_py_in_path(base string) (missing bool) {
 	if _, err := os.Stat(init_py_path); errors.Is(err, os.ErrNotExist) {
 		missing = true
 
+		fmt.Printf("create %v\n", init_py_path)
 		os.Create(init_py_path) // nolint
 	}
 

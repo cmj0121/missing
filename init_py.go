@@ -6,8 +6,15 @@ import (
 	"io/fs"
 	"io/ioutil"
 	"os"
+	"path"
 	"regexp"
-	"strings"
+	"sort"
+)
+
+var (
+	DEFAULT_PATTERN = []string{
+		"test*.py",
+	}
 )
 
 // find the missing but necessary __init__.py
@@ -19,17 +26,28 @@ type InitPy struct {
 	KeepRoot bool `arg:"-r,--keep-root" help:"keep root __init__.py"`
 
 	// search the __init__.py used for unittest
-	Pattern string `arg:"-p" default:"test*.py" help:"the file regexp pattern and split-by comma (',')"`
+	Pattern []string `arg:"-p" help:"the file regexp pattern"`
+
+	// the exclude pattern which exactly match the pattern
+	Exclude []string `arg:"-e" help:"exclude the folder that match the search path"`
 }
 
 // find the missing __init__.py
 func (cmd *InitPy) Execute() (ok bool, err error) {
 	var res []*regexp.Regexp
 
-	for _, pattern := range strings.Split(cmd.Pattern, ",") {
+	if len(cmd.Pattern) == 0 {
+		// append the default pattern
+		cmd.Pattern = append(cmd.Pattern, DEFAULT_PATTERN...)
+	}
+
+	for _, pattern := range cmd.Pattern {
 		// save the file pattern
 		res = append(res, regexp.MustCompile(pattern))
 	}
+
+	// sort the exclude pattern
+	sort.Strings(cmd.Exclude)
 
 	ok, err = cmd.search_missing_init_py(cmd.BaseDir, res)
 	return
@@ -38,6 +56,14 @@ func (cmd *InitPy) Execute() (ok bool, err error) {
 // find the missing based on the basedir and recursive if path is folder
 func (cmd *InitPy) search_missing_init_py(base string, res []*regexp.Regexp) (missing bool, err error) {
 	var files []fs.FileInfo
+
+	idx := sort.SearchStrings(cmd.Exclude, base)
+	if idx >= 0 && idx < len(cmd.Exclude) {
+		if path.Clean(base) == path.Clean(cmd.Exclude[idx]) {
+			// found in the exclude path, skip
+			return
+		}
+	}
 
 	files, err = ioutil.ReadDir(base)
 	if err != nil {

@@ -13,7 +13,7 @@ import (
 
 var (
 	DEFAULT_PATTERN = []string{
-		"test*.py",
+		`test.*?\.py`,
 	}
 )
 
@@ -76,6 +76,11 @@ func (cmd *InitPy) search_missing_init_py(base string, res []*regexp.Regexp) (mi
 		switch {
 		case file.IsDir():
 			var sub_missing bool
+
+			if file.Name() == ".git" {
+				// skip the .git folder
+				continue
+			}
 			subdir := fmt.Sprintf("%v/%v", base, file.Name())
 
 			sub_missing, err = cmd.search_missing_init_py(subdir, res)

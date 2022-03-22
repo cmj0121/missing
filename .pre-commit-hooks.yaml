@@ -1,0 +1,6 @@
+- id: missing_init_py
+  name: missing __init__.py
+  description: find the missing but necessary __init__.py
+  language: golang
+  pass_filenames: false
+  entry: missing init_py

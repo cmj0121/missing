@@ -3,4 +3,4 @@
   description: find the missing but necessary __init__.py
   language: golang
   pass_filenames: false
-  entry: missing init_py
+  entry: missing init-py

@@ -9,4 +9,10 @@ The simple [pre-commit][0] hook to find the missing but necessary file.
     - id: missing-init-py
 ```
 
+## arguments ##
+
+| argument         | type           | description             |
+|------------------|----------------|-------------------------|
+| `-e` `--exclude` | List of string | exclude the folder path |
+
 [0]: https://pre-commit.com/

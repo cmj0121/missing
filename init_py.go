@@ -46,6 +46,11 @@ func (cmd *InitPy) Execute() (ok bool, err error) {
 		res = append(res, regexp.MustCompile(pattern))
 	}
 
+	for idx := range cmd.Exclude {
+		// set the path clean
+		cmd.Exclude[idx] = path.Clean(cmd.Exclude[idx])
+	}
+
 	// sort the exclude pattern
 	sort.Strings(cmd.Exclude)
 
@@ -57,12 +62,11 @@ func (cmd *InitPy) Execute() (ok bool, err error) {
 func (cmd *InitPy) search_missing_init_py(base string, res []*regexp.Regexp) (missing bool, err error) {
 	var files []fs.FileInfo
 
+	base = path.Clean(base)
 	idx := sort.SearchStrings(cmd.Exclude, base)
-	if idx >= 0 && idx < len(cmd.Exclude) {
-		if path.Clean(base) == path.Clean(cmd.Exclude[idx]) {
-			// found in the exclude path, skip
-			return
-		}
+	if idx >= 0 && idx < len(cmd.Exclude) && base == cmd.Exclude[idx] {
+		// found in the exclude path, skip
+		return
 	}
 
 	files, err = ioutil.ReadDir(base)

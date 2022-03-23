@@ -4,5 +4,5 @@ const (
 	// the package version meta
 	MAJOR = 0
 	MINOR = 2
-	MACRO = 2
+	MACRO = 3
 )
